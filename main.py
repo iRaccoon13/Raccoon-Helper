@@ -18,7 +18,7 @@ async def on_ready():
 
 @bot.event
 async def on_guild_join(guild):
-  data[guild.id] = {
+  data[str(guild.id)] = {
       "settings": {
           "notify_channel": "",
           "notify_message": "",
