@@ -1,6 +1,6 @@
 {"guild":{
   "settings": {
-    "leveling: {"
+    "leveling": {
       "notify_channel": "",
       "notify_message": "",
       "timeout": 0,
