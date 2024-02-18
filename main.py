@@ -82,14 +82,14 @@ async def notifychannel(interaction: discord.Interaction,
     notify_channel="Set the channel for level up notifications to be sent. ",
     notify_message="Set the notification message. Use @u to mention the user and @l to mention the level.",
     xp_by_message="Set the amount of XP a user gets per message. Level up at 100 XP",
-    timeout="Set the amount of time the bot will wait between giving xp from messages. (Seconds)"
-)
+    timeout="Set the amount of time the bot will wait between giving xp from messages. (Seconds)")
 @commands.has_permissions(manage_guild=True)
 async def leveling_settings(interaction: discord.Interaction, 
     notify_channel:discord.TextChannel=None, 
     notify_message:str=None, 
     xp_by_message:int=5,
-    timeout:int=0):
+    timeout:int=0,
+    ):
   try:
     data[str(interaction.guild.id)]
   except KeyError:
