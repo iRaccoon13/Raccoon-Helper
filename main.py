@@ -38,15 +38,6 @@ async def on_message(message):
     return
   if message.author == bot.user:
     return
-  if message.content in data[str(
-      message.guild.id)]["settings"]["blacklisted_text"]:
-    return
-  if message.channel in data[str(
-      message.guild.id)]["settings"]["blacklisted_channels"]:
-    return
-  for role in message.author.roles:
-    if role in data[str(message.guild.id)]["settings"]["blacklisted_roles"]:
-      return
   if message.author.id not in list(data[str(
       message.guild.id)]["members"].keys()):
     data[str(message.guild.id)]["members"][str(
