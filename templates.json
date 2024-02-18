@@ -1,0 +1,20 @@
+{"guild":{
+  "settings": {
+    "leveling: {"
+      "notify_channel": "",
+      "notify_message": "",
+      "timeout": 0,
+      "xp_by_message": 0,
+      "blacklisted_channels": [],
+      "blacklisted_roles": [],
+      "blacklisted_text": []}
+  },
+   "members": {}
+},
+  "member": {
+    "level": 0,
+    "xp": 0,
+    "messages": 1
+    }
+}
+

@@ -4,6 +4,9 @@ from discord.ext import commands
 with open("data.json") as f:
   data = json.load(f)
 
+with open("templates.json") as f:
+  templates = json.load(f)
+
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -18,25 +21,13 @@ async def on_ready():
 
 @bot.event
 async def on_guild_join(guild):
-  data[str(guild.id)] = {
-      "settings": {
-          "notify_channel": "",
-          "notify_message": "",
-          "timeout": 0,
-          "xp_by_message": 0,
-          "blacklisted_channels": [],
-          "blacklisted_roles": [],
-          "blacklisted_text": []
-      },
-      "members": {}
-  }
+  data[str(guild.id)] = templates[guild]
 
 
 @bot.tree.command(name="ping", description="Pong!")
 async def ping(interaction: discord.Interaction):
   await interaction.response.send_message(
       "I don't have time to play table tennis!")
-
 
 @bot.event
 async def on_message(message):
@@ -57,12 +48,7 @@ async def on_message(message):
       return
   if message.author.id not in list(data[str(
       message.guild.id)]["members"].keys()):
-    print("hello")
-    data[str(message.guild.id)]["members"][str(message.author.id)] = {
-        "level": 0,
-        "xp": 0,
-        "messages": 1
-    }
+    data[str(message.guild.id)]["members"][str(message.author.id)] = templates["member"]
   data[str(message.guild.id)]["members"][str(
       message.author.id)]["messages"] += 1
   data[str(message.guild.id)]["members"][str(
@@ -73,24 +59,13 @@ async def on_message(message):
     json.dump(data, f)
 
 
-@bot.tree.command(name="setup", description="Resets all settings")
-#@commands.has_permissions(manage_guild=True)
+@bot.tree.command(name="setup", description="Resets all settings, but can fix errors. ")
+@commands.has_permissions(manage_guild=True)
 async def setup(interaction: discord.Interaction):
-  data[str(interaction.guild_id)] = {
-      "settings": {
-          "notify_channel": "",
-          "notify_message": "",
-          "timeout": 0,
-          "xp_by_message": 0,
-          "blacklisted_channels": [],
-          "blacklisted_roles": [],
-          "blacklisted_text": []
-      },
-      "members": {}
-  }
+  data[str(interaction.guild_id)] = templates[guild]
   with open("data.json", "w") as f:
     json.dump(data, f)
-  await interaction.response.send_message("All settings have been reset")
+  await interaction.response.send_message("All settings have been reset. Now, run ``/settings``")
 
 
 @bot.tree.command(
@@ -99,25 +74,29 @@ async def setup(interaction: discord.Interaction):
 @commands.has_permissions(manage_guild=True)
 async def notifychannel(interaction: discord.Interaction,
                         channel: discord.TextChannel):
-  try:
-    data[str(interaction.guild_id)]["settings"]["notify_channel"] = channel.id
-    with open("data.json", "w") as f:
-      json.dump(data, f)
-  except ValueError:
-    await interaction.response.send_message("Please run ``/setup`` first.")
-  else:
-    await interaction.response.send_message(
-        f"Set notify channel to {channel.mention}")
 
+ 
 
-@bot.tree.command(name="settings")
+@bot.tree.command(name="settings leveling")
 @discord.app_commands.describe(
-    notifymessage=
-    "Set the notification message. Use @u to mention the user and @l to mention the level."
+    notify_channel="Set the channel for level up notifications to be sent. ",
+    notify_message="Set the notification message. Use @u to mention the user and @l to mention the level.",
+    xp_by_message="Set the amount of XP a user gets per message. Level up at 100 XP",
+    timeout="Set the amount of time the bot will wait between giving xp from messages. (Seconds)"
 )
 @commands.has_permissions(manage_guild=True)
-async def notifymessage(interaction: discord.Interaction, notifymessage: str):
-  data[str(interaction.guild_id)]["settings"]["notify_message"] = notifymessage
+async def leveling_settings(interaction: discord.Interaction, 
+    notify_channel:discord.TextChannel=None, 
+    notify_message:str=None, 
+    xp_by_message:int=5,
+    timeout:int=0):
+  try:
+    data[str(interaction.guild.id)]
+  except KeyError:
+    await interaction.response.send_message("Please run ``/setup`` first.")
+  args = locals()
+  for option in [for item in args().keys() if args[item] != None and args[item] != interaction]:
+    data[str(interaction.guild_id)]["settings"]["leveling"][option] = args[option]
 
 
 bot.run(os.environ['TOKEN'])
