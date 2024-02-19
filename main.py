@@ -10,7 +10,7 @@ with open("templates.json") as f:
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='$', intents=intents)
+bot = commands.Bot(command_prefix='%!', intents=intents)
 
 
 @bot.event
@@ -32,22 +32,35 @@ async def ping(interaction: discord.Interaction):
 
 @bot.event
 async def on_message(message):
+  author_id = message.author.id
+  guild_id = message.guild.id
   try:
-    data[str(message.guild.id)]
+    guild_data = data[str(guild_id)]
   except KeyError:
     return
   if message.author == bot.user:
     return
-  if message.author.id not in list(data[str(
-      message.guild.id)]["members"].keys()):
-    data[str(message.guild.id)]["members"][str(
-        message.author.id)] = templates["member"]
-  data[str(message.guild.id)]["members"][str(
-      message.author.id)]["messages"] += 1
-  data[str(message.guild.id)]["members"][str(
-      message.author.id)]["xp"] += data[str(
-          message.guild.id)]["settings"]["xp_by_message"]
+  try:
+    member = data[str(guild_id)]["members"][str(author_id)]
+  except KeyError:
+    member = templates["member"]
 
+  ## Leveling
+  member["leveling"]["messages"] += 1
+  member["leveling"]["xp"] += guild_data["settings"]["leveling"][
+      "xp_by_message"]
+  if member["leveling"]["xp"] >= 100:
+    #try:
+    member["leveling"]["level"] += 1
+    member["leveling"]["xp"] = 0
+    await bot.get_channel(
+        int(guild_data["settings"]["leveling"]["notify_channel"])
+    ).send(guild_data["settings"]["leveling"]["notify_message"].replace(
+        "@u",
+        message.author.mention).replace("@l",
+                                        str(member["leveling"]["level"])))
+
+  data[str(guild_id)][str(author_id)] = member
   with open("data.json", "w") as f:
     json.dump(data, f)
 
@@ -59,10 +72,12 @@ async def setup(interaction: discord.Interaction):
   data[str(interaction.guild_id)] = templates["guild"]
   with open("data.json", "w") as f:
     json.dump(data, f)
-  await interaction.response.send_message(
-      "All settings have been reset. Now, run ``/settings``")
+  await interaction.response.send_message("All settings have been reset. ")
 
 
+### LEVELING
+##
+##
 @bot.tree.command(name="leveling_settings")
 @discord.app_commands.describe(
     notify_channel="Set the channel for level up notifications to be sent. ",
@@ -87,20 +102,24 @@ async def leveling_settings(
     await interaction.response.send_message("Please run ``/setup`` first.")
     return
   else:
-    if notify_channel != None:
+    if notify_channel is not None:
       data[str(interaction.guild.id
-               )]["settings"]["notify_channel"] = notify_channel.id
-    if notify_message != None:
+               )]["settings"]["leveling"]["notify_channel"] = notify_channel.id
+    if notify_message is not None:
+      data[str(interaction.guild.id
+               )]["settings"]["leveling"]["notify_message"] = notify_message
+    if xp_by_message is not None:
+      data[str(interaction.guild.id
+               )]["settings"]["leveling"]["xp_by_message"] = xp_by_message
+    if timeout is not None:
       data[str(
-          interaction.guild.id)]["settings"]["notify_message"] = notify_message
-    if xp_by_message != None:
-      data[str(
-          interaction.guild.id)]["settings"]["xp_by_message"] = xp_by_message
-    if timeout != None:
-      data[str(interaction.guild.id)]["settings"]["timeout"] = timeout
+          interaction.guild.id)]["settings"]["leveling"]["timeout"] = timeout
     with open("data.json", "w") as f:
       json.dump(data, f)
     await interaction.response.send_message("Settings have been updated.")
 
+
+###MODERATION
+##
 
 bot.run(os.environ['TOKEN'])

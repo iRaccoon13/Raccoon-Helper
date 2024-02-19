@@ -7,14 +7,20 @@
       "xp_by_message": 0,
       "blacklisted_channels": [],
       "blacklisted_roles": [],
-      "blacklisted_text": []}
+      "blacklisted_text": []
+    },
+    "moderation": {
+      
+    }
   },
    "members": {}
 },
   "member": {
-    "level": 0,
-    "xp": 0,
-    "messages": 1
+    "leveling": {
+      "level": 0,
+      "xp": 0,
+      "messages": 0
     }
+  }
 }
 
