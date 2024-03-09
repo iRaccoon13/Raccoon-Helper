@@ -1,0 +1,10 @@
+[30;1m2024-03-09 00:29:42[0m [34;1mINFO    [0m [35mdiscord.client[0m logging in using static token
+[30;1m2024-03-09 00:29:43[0m [34;1mINFO    [0m [35mdiscord.gateway[0m Shard ID None has connected to Gateway (Session ID: e220d84e04ac0c95ac3ea24e07ec6ed3).
+[30;1m2024-03-09 01:31:09[0m [31mERROR   [0m [35mdiscord.client[0m Attempting a reconnect in 1.77s
+[31mTraceback (most recent call last):
+  File "/home/runner/Simple-leveling-bot/.pythonlibs/lib/python3.10/site-packages/discord/client.py", line 659, in connect
+    await self.ws.poll_event()
+  File "/home/runner/Simple-leveling-bot/.pythonlibs/lib/python3.10/site-packages/discord/gateway.py", line 646, in poll_event
+    raise ConnectionClosed(self.socket, shard_id=self.shard_id, code=code) from None
+discord.errors.ConnectionClosed: Shard ID None WebSocket closed with 1000[0m
+[30;1m2024-03-09 01:31:11[0m [34;1mINFO    [0m [35mdiscord.gateway[0m Shard ID None has successfully RESUMED session e220d84e04ac0c95ac3ea24e07ec6ed3.

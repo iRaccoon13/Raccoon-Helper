@@ -4,22 +4,23 @@
       "notify_channel": "",
       "notify_message": "",
       "timeout": 0,
-      "xp_by_message": 0,
-      "blacklisted_channels": [],
-      "blacklisted_roles": [],
-      "blacklisted_text": []
+      "xp_by_message": 5
     },
-    "moderation": {
-      
+    "antiraid": {
+      "bans_per_min": 999,
+      "kicks_per_min": 999,
+      "channel_delete_per_min": 999
     }
   },
-   "members": {}
+  "members": {},
+  "games": {}
 },
   "member": {
     "leveling": {
       "level": 0,
       "xp": 0,
-      "messages": 0
+      "messages": 0,
+      "last_message": 0
     }
   }
 }
