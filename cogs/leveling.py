@@ -33,18 +33,9 @@ class leveling(cmds.Cog, name="leveling"):
     if message.author == self.bot.user:
       return
     load_data()
-    i = 0
-    while True:
-      i += 1
-      sleep(2)
-      try:
-        author_id = str(message.author.id)
-        guild_id = str(message.guild.id)
-      except KeyError:
-        if i >= 10:
-          return
-      else:
-        break
+    sleep(2)
+    author_id = str(message.author.id)
+    guild_id = str(message.guild.id)
     try:
       guild_data = data[guild_id]
     except KeyError:

@@ -1,5 +1,14 @@
 # To-Do
+<hr>
+
+## In progress
 - Games
-  - RPS
+  - RPS (in progress)
+
+<hr>
+
+## Not Started
+
 - Connections
 - Owner Dashboard
+- Error handling

@@ -27,11 +27,27 @@ class item_select(discord.ui.Select):
         ]
     super().__init__(placeholder="What's your choice?",max_values=1,min_values=1,options=options)
   async def callback(self, interaction: discord.Interaction):
-    pass
+    v = views.Confirm()
+    await interaction.response.send_message(embed=discord.Embed(title="Are you sure? ", description=f"You chose {self.values[0]}"), view=v, ephemeral=True)
+    game = data[f"{interaction.guild.id}"]["games"][f"{interaction.channel.id}"]
+    await v.wait()
+    if v.value == None:
+      await interaction.message.delete()
+    elif v.value == True:
+      templateplayer = {
+        "name": interaction.user.display_name,
+        "choice": self.values[0] or None
+      }
+      game["players"][interaction.user] = templateplayer
+    
 
 class item_view(discord.ui.View):
   def __init__(self):
     self.add_item(item_select())
+  @discord.ui.button(label="Leave", style=discord.ButtonStyle.red)
+  async def callback(self, interaction: discord.Interaction, button: discord.Button):
+    
+    pass
 
 class new_game_view(discord.ui.View):
   @discord.ui.Button(label="Join",style=discord.ButtonStyle.green)
@@ -47,6 +63,12 @@ class rockpaperscissors_cog(cmds.Cog):
   async def new_game(self, ctx):
     load_data()
     guild_id = str(ctx.guild.id)
-    data[guild_id]["games"][str(ctx.channel.id)] = {"type": "rockpaperscissors", "creator": ctx.author, "created_at": time()}
+    templategame = {
+      "type": "rockpaperscissors", 
+      "creator": ctx.author, 
+      "created_at": time(),
+      "players": {}
+    }
+    data[guild_id]["games"][str(ctx.channel.id)] = templategame
     e = discord.Embed(title="Rock Paper Scissors Tournament", description="Press the button to join the tournament. ")
     await ctx.send(embed=e,view=new_game_view())

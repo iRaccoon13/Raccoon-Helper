@@ -7,8 +7,7 @@ discord.utils.setup_logging(level=logging.INFO)
 cogs = [
   "leveling",
   "misc",
-  "moderation",
-  "testing"
+  "moderation"
 ]
 
 
@@ -33,7 +32,7 @@ bot = commands.Bot(command_prefix="R! ", intents=intents)
 
     
 @bot.hybrid_command(name="reload", description="Reloads cogs.")
-# @commands.is_owner()
+@commands.is_owner()
 async def reload(ctx, cog: str):
   if ctx.author.id == 789003007601410048:
     try:
@@ -45,7 +44,10 @@ async def reload(ctx, cog: str):
     await ctx.send("You do not have permission to use this command.", ephemeral=True)
 
   
-
+@reload.error
+async def reload_error(error, ctx):
+  if isinstance(error, commands.errors.NotOwner):
+    ctx.send("You can't use this! ", ephemeral=True)
 
 @bot.event
 async def on_ready():
